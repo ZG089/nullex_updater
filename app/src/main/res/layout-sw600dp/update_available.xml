@@ -58,7 +58,7 @@
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/inter_medium"
             android:textSize="15sp"
-            android:ellipsize="end" />
+            android:lineSpacingExtra="2dp" />
     </LinearLayout>
     <FrameLayout
         android:id="@+id/downloadButton"

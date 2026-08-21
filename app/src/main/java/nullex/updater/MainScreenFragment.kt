@@ -31,25 +31,32 @@ class MainScreenFragment : Fragment()
             view.findViewById<TextView>(R.id.no_internet_text).visibility = View.VISIBLE;
         }
         else viewLifecycleOwner.lifecycleScope.launch {
-            OtaMetadata.load();
-            view.findViewById<TextView>(R.id.model).text = OtaMetadata.deviceName;
-            if(!OtaMetadata.isSupported || OtaMetadata.preferredModel?.version == OtaMetadata.currentSystemVersion)
+            try
             {
-                if(OtaMetadata.isSupported)
+                OtaMetadata.load();
+                view.findViewById<TextView>(R.id.model).text = OtaMetadata.deviceName;
+                if(!OtaMetadata.isSupported || OtaMetadata.preferredModel?.version == OtaMetadata.currentSystemVersion)
                 {
-                    ovrTXT.text = getString(R.string.not_found);
+                    if(OtaMetadata.isSupported)
+                    {
+                        ovrTXT.text = getString(R.string.not_found);
+                        parentFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
+                            .replace(R.id.ThisFragmentContainer, NotFound()).commit();
+                    }
+                    else ovrTXT.text = getString(R.string.unknown);
+                }
+                else if(OtaMetadata.preferredModel?.version != OtaMetadata.currentSystemVersion)
+                {
+                    ovrTXT.text = getString(R.string.found);
                     parentFragmentManager.beginTransaction()
                         .setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
-                        .replace(R.id.ThisFragmentContainer, NotFound()).commit();
+                        .replace(R.id.ThisFragmentContainer, UpdatesAvailable()).commit();
                 }
-                else ovrTXT.text = getString(R.string.unknown);
             }
-            else if(OtaMetadata.preferredModel?.version != OtaMetadata.currentSystemVersion)
+            catch(e: Exception)
             {
-                ovrTXT.text = getString(R.string.found);
-                parentFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out)
-                    .replace(R.id.ThisFragmentContainer, UpdatesAvailable()).commit();
+                ovrTXT.text = getString(R.string.no_internet);
             }
         }
     }
