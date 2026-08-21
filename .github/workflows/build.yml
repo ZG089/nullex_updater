@@ -48,6 +48,11 @@ jobs:
           apksigner=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)
           "$apksigner" verify --verbose app/build/outputs/apk/release/app-release.apk
 
+      - name: Verify release APK is installable
+        run: |
+          test_only=$(apkanalyzer manifest print app/build/outputs/apk/release/app-release.apk | grep -o 'testOnly="[^"]*"' || true)
+          test "$test_only" != 'testOnly="true"'
+
       - name: Upload signed release APK
         uses: actions/upload-artifact@v7
         with:
