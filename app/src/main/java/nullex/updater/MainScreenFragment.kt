@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import nullex.updater.fetchModelName.ModelNameRetro
 import nullex.updater.fetchOTAMetadata.OtaModel
 import nullex.updater.fetchOTAMetadata.RetrofitClient
 import nullex.updater.fetchOTAMetadata.ChangelogReference
@@ -87,10 +86,9 @@ class MainScreenFragment : Fragment()
         suspend fun load()
         {
             val metadata = RetrofitClient.githubUserContent.getOtaInfo();
-            val deviceModel = ModelNameRetro.modelNameGitContent.getDevices();
             //init
             currentSystemVersion = Build.DISPLAY.split(" ").getOrNull(1) ?: "1.0.0";
-            deviceName = deviceModel[Build.MODEL]?.name ?: Build.MODEL;
+            deviceName = "device_one";
             isSupported = deviceName?.let { name -> metadata.supported.split(",").any { it.trim().equals(name.trim(), ignoreCase = true) } } == true;
             if(isSupported)
             {
