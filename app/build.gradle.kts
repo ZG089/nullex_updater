@@ -6,6 +6,15 @@ android {
     namespace = "nullex.updater"
     compileSdkPreview = "DEV"
 
+    signingConfigs {
+        create("test") {
+            storeFile = rootProject.file("testkey.keystore")
+            storePassword = "android"
+            keyAlias = "androidtestkey"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "nullex.updater"
         minSdk = 28
@@ -20,7 +29,7 @@ android {
                 enable = false
             }
             applicationIdSuffix = ".sha"
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("test")
         }
     }
     compileOptions {
