@@ -50,8 +50,11 @@ jobs:
 
       - name: Verify release APK is installable
         run: |
-          test_only=$(apkanalyzer manifest print app/build/outputs/apk/release/app-release.apk | grep -o 'testOnly="[^"]*"' || true)
-          test "$test_only" != 'testOnly="true"'
+          aapt=$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)
+          if "$aapt" dump badging app/build/outputs/apk/release/app-release.apk | grep -q "testOnly='true'"; then
+            echo "Release APK is marked test-only"
+            exit 1
+          fi
 
       - name: Upload signed release APK
         uses: actions/upload-artifact@v7
