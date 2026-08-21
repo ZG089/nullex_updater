@@ -1,6 +1,6 @@
 package nullex.updater
-import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,10 +11,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.launch
 import nullex.updater.fetchOTA.FetchOTA
 
@@ -35,10 +35,14 @@ class UpdatesAvailable : Fragment()
         val verSize: TextView = view.findViewById(R.id.buildidwithsize);
         val changelogText: TextView = view.findViewById(R.id.changelogText);
         val changelogsAct: LinearLayout = view.findViewById(R.id.changelogsAction);
-        val bannerColor = MaterialColors.getColor(changelogsAct, R.attr.interactiveCard);
-        downloadButton.backgroundTintList = ColorStateList.valueOf(bannerColor);
-        val buttonTextColor = if (ColorUtils.calculateContrast(Color.WHITE, bannerColor) >=
-            ColorUtils.calculateContrast(Color.BLACK, bannerColor)) Color.WHITE else Color.BLACK;
+        val bannerBackground = ContextCompat.getDrawable(requireContext(), R.drawable.main_card)
+            ?.mutate() as? GradientDrawable;
+        bannerBackground?.cornerRadius = resources.displayMetrics.density * 50f;
+        downloadButton.background = bannerBackground;
+        val bannerColors = intArrayOf(Color.rgb(98, 207, 244), Color.rgb(44, 103, 242));
+        val buttonTextColor = if (bannerColors.all {
+                ColorUtils.calculateContrast(Color.WHITE, it) >= ColorUtils.calculateContrast(Color.BLACK, it)
+            }) Color.WHITE else Color.BLACK;
         downloadButtonText.setTextColor(buttonTextColor);
         // lets uhrm- idk i just wanted to write some comment so..
         metadata.expandVersionInfo = false;
